@@ -317,7 +317,7 @@ class YOLOModel:
         return False, image    
     
     async def detect_and_track_person_and_draw(self, image):
-        results = self.person_model.track(image, persist=True, device=self.device)
+        results = self.pothole_model.track(image, persist=True, device=self.device)
 
         # Check if results are valid
         if not results or len(results) == 0 or results[0] is None or results[0].boxes is None:
