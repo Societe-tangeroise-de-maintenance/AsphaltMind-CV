@@ -21,7 +21,9 @@ from fastapi.staticfiles import StaticFiles
 import cv2
 import logging
 import random
+# Changed to use pothole-only architecture
 from src.architecture import YOLOModel
+#from src.architecture_pothole_only import YOLOModel
 import asyncio
 from starlette.concurrency import run_in_threadpool
 import threading
