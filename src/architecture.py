@@ -350,8 +350,8 @@ class YOLOModel:
 
             return detections, annotated_image
         except Exception as e:
-            print("No object detected")
-            return image
+            print("No object detected:", str(e))
+            return False, image
 
     # async def face_recognition_and_draw_users(image, person_bbx):
     #     # Convert to RGB since face_recognition uses RGB
