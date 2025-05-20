@@ -1,8 +1,8 @@
 
 class Settings():
-    weapons_detection_thresh = 0.6
-    person_detection_thresh = 0.6
-    threat_detection_thresh = 0.9
+    weapons_detection_thresh = 0.4
+    person_detection_thresh = 0.4
+    threat_detection_thresh = 0.5
     pothole_detection_thresh = 0.1
 
     # Path to the YOLO weights and model configuration

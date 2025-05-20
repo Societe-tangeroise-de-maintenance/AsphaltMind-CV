@@ -70,7 +70,7 @@ class VideoCamera:
             #image = yolo_model.detect_pose(image)
             #image = yolo_model.detect_objects_and_draw(image)
             #result = loop.run_until_complete(yolo_model.pipeline(image))
-            result, image = loop.run_until_complete(yolo_model.pipeline_and_draw(image))
+            result, image = loop.run_until_complete(yolo_model.detect_weapon_and_draw(image))
             # Uncomment the line below to use pothole detection instead
             #result, image = loop.run_until_complete(yolo_model.pipeline_pothole_and_draw(image))
             print(result)
