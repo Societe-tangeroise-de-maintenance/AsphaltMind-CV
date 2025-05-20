@@ -396,69 +396,59 @@ class YOLOModel:
     #     return name, image
 
 
-    # async def pipeline_and_draw(self, image):
-    #     # Step 1: Detect and track persons
-    #     person_results, annotated_image = await self.detect_and_track_person_and_draw(image)
+    async def pipeline_and_draw(self, image):
+        # Step 1: Detect and track persons
+        person_results, annotated_image = await self.detect_and_track_person_and_draw(image)
 
-    #     if not person_results:
-    #         return False, image
+        if not person_results:
+            return False, image
         
-    #     detected_weapons = []
-    #     faces_recognized = []
-    #     person_processed = []
+        detected_weapons = []
+        faces_recognized = []
+        person_processed = []
 
-    #     for track_id, person_bbx, conf in person_results:
+        for track_id, person_bbx, conf in person_results:
 
-    #         if conf < settings.person_detection_thresh:
-    #             print("Person confidence is too low")
-    #             break
+            if conf < settings.person_detection_thresh:
+                print("Person confidence is too low")
+                break
 
-    #         # if track_id not in faces_recognized:
-    #         #     #only process each person once
-    #         #     faces_recognized.append(track_id)
-    #         #     #recognize faces
-    #         #     name = self.face_recognition_users(image, person_bbx)
-    #         #     if name:
-    #         #         person_processed.append((track_id, person_bbx, name))
-    #         # else:
-    #         #     continue
+            # if track_id not in faces_recognized:
+            #     #only process each person once
+            #     faces_recognized.append(track_id)
+            #     #recognize faces
+            #     name = self.face_recognition_users(image, person_bbx)
+            #     if name:
+            #         person_processed.append((track_id, person_bbx, name))
+            # else:
+            #     continue
 
-    #         # Step 3: Detect weapons in the person ROI
-    #         weapon_results, annotated_image = await self.detect_weapon_and_draw(annotated_image)
+            # Step 3: Detect weapons in the person ROI
+            weapon_results, annotated_image = await self.detect_weapon_and_draw(annotated_image)
 
-    #         if weapon_results:
-    #             # Step 4: Check for new detection and send alert if necessary
-    #             #check if track_id is in alert_timestamps
-    #             if track_id in self.alert_timestamps:
-    #                 last_alert_time = self.alert_timestamps.get(track_id, 0)
-    #                 current_time = time.time()
+            if weapon_results:
+                # Step 4: Check for new detection and send alert if necessary
+                #check if track_id is in alert_timestamps
+                if track_id in self.alert_timestamps:
+                    last_alert_time = self.alert_timestamps.get(track_id, 0)
+                    current_time = time.time()
 
-    #             else:
-    #                 last_alert_time = 0
-    #                 current_time = time.time()
+                else:
+                    last_alert_time = 0
+                    current_time = time.time()
 
-    #             if current_time - last_alert_time > self.ALERT_THROTTLE_TIME:
-    #                 self.alert_timestamps[track_id] = current_time
-    #                 detected_weapons.append((track_id, weapon_results))
 
-    #                 name, annotated_image = await self.face_recognition_and_draw_users(annotated_image, person_bbx)
-    #                 if name:
-    #                     person_name = name
-    #                 else:
-    #                     person_name = "Unknown"
+                    image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
+                    img = Image.fromarray(image_rgb)
+                    buffered = io.BytesIO()
+                    img.save(buffered, format="JPEG")
+                    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-    #                 image_rgb = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
-    #                 img = Image.fromarray(image_rgb)
-    #                 buffered = io.BytesIO()
-    #                 img.save(buffered, format="JPEG")
-    #                 img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+                    #get label of detected weapon
+                    label = weapon_results[0]
+                    current_time = datetime.datetime.now().isoformat()
 
-    #                 #get label of detected weapon
-    #                 label = weapon_results[0]
-    #                 current_time = datetime.datetime.now().isoformat()
-    #                 send_incident("Detected: "+label, current_time, img_str, "location", person_name)
-
-    #     return detected_weapons if detected_weapons else False, annotated_image
+        return detected_weapons if detected_weapons else False, annotated_image
 
 ##############################################################################################################
 #Detect pipeline
