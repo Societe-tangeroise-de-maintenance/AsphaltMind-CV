@@ -322,13 +322,13 @@ class YOLOModel:
         # Check if results are valid
         if not results or len(results) == 0 or results[0] is None or results[0].boxes is None:
             print(f"Results: {results}")
-            return False
+            return False, image
 
         boxes = results[0].boxes.xywh.cpu()
 
         #check tensor size if size (0, 4) then return image
         if boxes.size(0) == 0:
-            return image
+            return False, image
         try:
             track_ids = results[0].boxes.id.int().cpu().tolist()
             confidence = results[0].boxes.conf.cpu().tolist()
