@@ -283,6 +283,19 @@ class YOLOModel:
             print("No image to detect objects on.")
             return False
         
+        #resize the image
+        # Resize image for faster processing
+        height, width = image.shape[:2]
+        target_width = 640  # Optimal size for most YOLO models
+        scale_factor = target_width / width
+        target_height = int(height * scale_factor)
+
+        # Only resize if the image is larger than the target size
+        if width > target_width:
+            image = cv2.resize(image, (target_width, target_height))
+        else:
+            image = image
+        
         results = self.pothole_model(image, stream=True, device=self.device)
         for r in results:
             boxes = r.boxes
@@ -291,7 +304,7 @@ class YOLOModel:
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                 conf = math.ceil((box.conf[0] * 100)) / 100
                 cls = int(box.cls[0])
-                class_name = self.class_names[cls]
+                class_name = self.pothole_class_names[cls]
                 label = f'{class_name}{conf}'
                 t_size = cv2.getTextSize(label, 0, fontScale=1, thickness=2)[0]
                 c2 = x1 + t_size[0], y1 - t_size[1] - 3
